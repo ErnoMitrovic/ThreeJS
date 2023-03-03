@@ -19,7 +19,7 @@ const imgName = 'NaikeIdent';
 const orbit = new OrbitControls(camera, renderer.domElement);
 orbit.enableZoom = true;
 
-camera.position.set(0,2,5);
+camera.position.set(0,20,50);
 orbit.update();
 
 const scene = new THREE.Scene();
@@ -27,15 +27,18 @@ const scene = new THREE.Scene();
 const light = new THREE.AmbientLight(0x333333, 0.4);
 scene.add(light);
 
-const point = new THREE.PointLight( 0xffffff, 0.8);
-point.position.set( 50, 50, 50 );
-scene.add( point );
+const pointLight = new THREE.PointLight( 0xffffff );
+pointLight.position.set(1,1,2);
+camera.add(pointLight);
+scene.add(camera);
 
 const texture = new THREE.TextureLoader().load(new URL('./public/NaikeIdent.png', import.meta.url));
-/*const boxGeometry = new THREE.BoxGeometry();
-const boxMaterial = new THREE.MeshStandardMaterial({map: texture});
-const box = new THREE.Mesh(boxGeometry, boxMaterial);
-scene.add(box);*/
+const woodTexture = new THREE.TextureLoader().load(new URL('./wood_texture.jpg', import.meta.url))
+const planeGeometry = new THREE.PlaneGeometry(100, 100);
+const planeMaterial = new THREE.MeshBasicMaterial({map: woodTexture, side: THREE.DoubleSide});
+const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+plane.rotation.x = 0.5 * Math.PI;
+scene.add(plane);
 
 new OBJLoader().load(
     new URL('./public/shoe.obj', import.meta.url),
