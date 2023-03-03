@@ -1,5 +1,8 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader'
+import img from "./public/NaikeIdent.png";
+
 
 const renderer = new THREE.WebGLRenderer();
 
@@ -11,8 +14,10 @@ const camera = new THREE.PerspectiveCamera(
     75,
     window.innerWidth / window.innerHeight,
     0.1,
-    1000
+    5000
 );
+
+
 const orbit = new OrbitControls(camera, renderer.domElement);
 orbit.enableZoom = true;
 
@@ -25,24 +30,38 @@ const helperAxes = new THREE.AxesHelper(5);
 const scene = new THREE.Scene();
 scene.add(helperAxes);
 
-const texture = new THREE.TextureLoader().load('Naike_Identity.png', (txt) => texture = txt, (xhr) => {
-    const p = document.createElement('p');
-    const txt = document.createTextNode( xhr.loaded / xhr.total * 100 ) + '% loaded';
-    p.appendChild(txt);
-    document.body.appendChild(p);
-}, (error) => {
-    const p = document.createElement('p');
-    const txt = document.createTextNode("Error: " + error.message);
-    p.appendChild(txt);
-    document.body.appendChild(p);
-} );
-const boxGeometry = new THREE.BoxGeometry();
-const boxMaterial = new THREE.MeshBasicMaterial({map: texture, color: 0x00ffff});
-const box = new THREE.Mesh(boxGeometry, boxMaterial);
-scene.add(box);
+const light = new THREE.AmbientLight(0x333333, 0.4);
+scene.add(light);
 
-function animate(time){
-    box.rotation.y = time / 1000;
-    renderer.render(scene, camera);
+const point = new THREE.PointLight( 0xffffff, 0.8);
+point.position.set( 50, 50, 50 );
+scene.add( point );
+
+const texture = new THREE.TextureLoader().load(img);
+/*const boxGeometry = new THREE.BoxGeometry();
+const boxMaterial = new THREE.MeshStandardMaterial({map: texture});
+const box = new THREE.Mesh(boxGeometry, boxMaterial);
+scene.add(box);*/
+
+new OBJLoader().load(
+    new URL('./public/shoe.obj', import.meta.url),
+    obj => {
+        obj.traverse(child => {
+            if(child.isMesh) child.material.map = texture;
+        })
+        scene.add(obj);
+        console.log( 'Success');
+    },
+    xhr => {
+        console.log(' OBJ ' +  Math.round(xhr.loaded / xhr.total * 100)  + '% loaded');
+    },
+    error => {
+        console.log("Error: " + error.message);
+    }
+);
+
+function animate(){
+    renderer.render(scene, camera);   
 }
+
 renderer.setAnimationLoop(animate);
