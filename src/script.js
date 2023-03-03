@@ -25,7 +25,7 @@ const helperAxes = new THREE.AxesHelper(5);
 const scene = new THREE.Scene();
 scene.add(helperAxes);
 
-const texture = new THREE.TextureLoader().load('/src/Naike_Identity.png', (txt) => texture = txt, (xhr) => {
+const texture = new THREE.TextureLoader().load('Naike_Identity.png', (txt) => texture = txt, (xhr) => {
     const p = document.createElement('p');
     const txt = document.createTextNode( xhr.loaded / xhr.total * 100 ) + '% loaded';
     p.appendChild(txt);
